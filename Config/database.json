@@ -1,0 +1,12 @@
+{
+    "Databases": {
+        "default": {
+            "hostname"  : "localhost",
+            "username"  : "root",
+            "password"  : "",
+            "DBDriver"  : "MySQLi",
+            "DBPrefix"  : "",
+            "port"      : 3306
+        }
+    }
+}
