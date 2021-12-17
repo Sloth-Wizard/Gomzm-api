@@ -1,9 +1,8 @@
 package database
 
 import (
-	"encoding/json" // fmt implements formatted I/O.
+	"encoding/json"
 	"os"
-	//_ "github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
@@ -20,7 +19,7 @@ type Config struct {
 }
 
 /*
-	Load the database configuration file
+Load the database configuration file
 */
 func LoadConfig(filename string) (Config, error) {
 	var config Config
@@ -33,5 +32,9 @@ func LoadConfig(filename string) (Config, error) {
 	jsonParser := json.NewDecoder(configFile)
 	err = jsonParser.Decode(&config)
 
-	return config, err
+	if err != nil {
+		return config, err
+	}
+
+	return config, nil
 }

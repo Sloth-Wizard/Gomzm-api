@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"gomzm-api/utils/database"
+	"gomzm-api/api/killmails"
 )
 
 func main() {
-	config, _ := database.LoadConfig("database.conf")
-	fmt.Println(config)
+	killmails, _ := killmails.KillmailsList()
+	fmt.Println(killmails)
 }
