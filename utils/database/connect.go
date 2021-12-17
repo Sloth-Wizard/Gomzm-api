@@ -14,13 +14,13 @@ func Connect() (*sql.DB, error) {
 	config, _ := LoadConfig("database.conf")
 	db, err := sql.Open("mysql", config.Db.User+":"+config.Db.Password+"@/"+config.Db.Database)
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 
 	// Then validate the DSN data passed
 	err = db.Ping()
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 
 	db.SetConnMaxLifetime(time.Minute * 3)

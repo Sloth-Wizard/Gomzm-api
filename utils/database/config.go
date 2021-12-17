@@ -21,11 +21,11 @@ type Config struct {
 /*
 Load the database configuration file
 */
-func LoadConfig(filename string) (Config, error) {
+func LoadConfig(filename string) (*Config, error) {
 	var config Config
 	configFile, err := os.Open("config/" + filename)
 	if err != nil {
-		return config, err
+		return nil, err
 	}
 	defer configFile.Close()
 
@@ -33,8 +33,8 @@ func LoadConfig(filename string) (Config, error) {
 	err = jsonParser.Decode(&config)
 
 	if err != nil {
-		return config, err
+		return nil, err
 	}
 
-	return config, nil
+	return &config, nil
 }
