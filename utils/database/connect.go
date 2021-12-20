@@ -5,6 +5,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -25,6 +26,8 @@ func Connect() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("Opening DB ...\n")
 
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)

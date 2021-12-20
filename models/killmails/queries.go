@@ -5,6 +5,7 @@ package killmails
 
 import (
 	"encoding/json"
+	"fmt"
 	"gomzm-api/utils/database"
 )
 
@@ -19,13 +20,15 @@ type Killmail struct {
 
 const LIMIT = "40" // Must be a string because it's used in queries
 
-var ( // Database connection init
-	db, _ = database.Connect()
-)
-
 func GetList() ([]Killmail, error) {
 	var killmail Killmail
 	var results []Killmail
+
+	// Open DB connection
+	db, err := database.Connect()
+	if err != nil {
+		return nil, err
+	}
 
 	// Prepare the statement
 	stmtOut, err := db.Prepare("SELECT * FROM killmails LIMIT " + LIMIT)
@@ -36,10 +39,13 @@ func GetList() ([]Killmail, error) {
 
 	// Execute the statement
 	rows, err := stmtOut.Query()
+	fmt.Printf("Getting KM from DB ...\n")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
+	defer db.Close()
+	fmt.Printf("Closing DB ...\n")
 
 	// Scan results
 	for rows.Next() {

@@ -2,10 +2,13 @@ package killmails
 
 import (
 	"encoding/json"
+	"fmt"
+
 	kmm "gomzm-api/models/killmails"
 )
 
 func KillmailsList() ([]byte, error) {
+	fmt.Printf("Calling API ...\n")
 	killmails, err := kmm.GetList()
 
 	if err != nil {

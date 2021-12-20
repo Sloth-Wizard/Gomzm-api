@@ -19,7 +19,7 @@ func getKmList(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Printf("Starting API ...")
+	fmt.Printf("Starting API ...\n")
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/killmails/", getKmList)
 
