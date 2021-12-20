@@ -7,6 +7,9 @@ import (
 	kmm "gomzm-api/models/killmails"
 )
 
+/*
+Get a list of killmails from the DB and prepare the data as bytes
+*/
 func KillmailsList() ([]byte, error) {
 	fmt.Printf("Calling API ...\n")
 	killmails, err := kmm.GetList()

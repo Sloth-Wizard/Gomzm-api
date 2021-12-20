@@ -7,6 +7,9 @@ import (
 	API "gomzm-api/api/killmails"
 )
 
+/*
+Call to API => list of killmails
+*/
 func getKmList(w http.ResponseWriter, r *http.Request) {
 	killmails, err := API.KillmailsList()
 	if err != nil {
@@ -18,6 +21,9 @@ func getKmList(w http.ResponseWriter, r *http.Request) {
 	w.Write(killmails)
 }
 
+/*
+Manage all the API routing
+*/
 func main() {
 	fmt.Printf("Starting API ...\n")
 	mux := http.NewServeMux()

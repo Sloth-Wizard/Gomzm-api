@@ -20,15 +20,16 @@ type Killmail struct {
 
 const LIMIT = "40" // Must be a string because it's used in queries
 
+var (
+	db, _ = database.Connect()
+)
+
+/*
+Open a connection to the DB and return the queried data
+*/
 func GetList() ([]Killmail, error) {
 	var killmail Killmail
 	var results []Killmail
-
-	// Open DB connection
-	db, err := database.Connect()
-	if err != nil {
-		return nil, err
-	}
 
 	// Prepare the statement
 	stmtOut, err := db.Prepare("SELECT * FROM killmails LIMIT " + LIMIT)
@@ -44,8 +45,6 @@ func GetList() ([]Killmail, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	defer db.Close()
-	fmt.Printf("Closing DB ...\n")
 
 	// Scan results
 	for rows.Next() {
