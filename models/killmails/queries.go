@@ -4,19 +4,20 @@ Contains all the queries to get killmails from the database
 package killmails
 
 import (
+	"encoding/json"
 	"gomzm-api/utils/database"
 )
 
 type Killmail struct {
-	id                      int
-	killmail_id             int
-	victim_character_id     int
-	final_blow_character_id int
-	final_blow_faction_id   int
-	killmail_details        string
+	Id                      uint            `json:"id"`
+	Killmail_id             uint            `json:"killmail_id"`
+	Victim_character_id     uint            `json:"victim_character_id"`
+	Final_blow_character_id uint            `json:"final_blow_character_id"`
+	Final_blow_faction_id   uint            `json:"final_blow_faction_id"`
+	Killmail_details        json.RawMessage `json:"killmail_details"`
 }
 
-const LIMIT = "2" // Must be a string because it's used in queries
+const LIMIT = "40" // Must be a string because it's used in queries
 
 var ( // Database connection init
 	db, _ = database.Connect()
@@ -42,10 +43,18 @@ func GetList() ([]Killmail, error) {
 
 	// Scan results
 	for rows.Next() {
-		err := rows.Scan(&killmail.id, &killmail.killmail_id, &killmail.victim_character_id, &killmail.final_blow_character_id, &killmail.final_blow_faction_id, &killmail.killmail_details)
+		err := rows.Scan(
+			&killmail.Id,
+			&killmail.Killmail_id,
+			&killmail.Victim_character_id,
+			&killmail.Final_blow_character_id,
+			&killmail.Final_blow_faction_id,
+			&killmail.Killmail_details)
+
 		if err != nil {
 			return nil, err
 		}
+
 		results = append(results, killmail)
 	}
 

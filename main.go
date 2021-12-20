@@ -2,10 +2,30 @@ package main
 
 import (
 	"fmt"
-	"gomzm-api/api/killmails"
+	"net/http"
+
+	API "gomzm-api/api/killmails"
 )
 
+func getKmList(w http.ResponseWriter, r *http.Request) {
+	killmails, err := API.KillmailsList()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(killmails)
+}
+
 func main() {
-	killmails, _ := killmails.KillmailsList()
-	fmt.Println(killmails)
+	fmt.Printf("Starting API ...")
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/killmails/", getKmList)
+
+	s := &http.Server{
+		Addr:    ":1337",
+		Handler: mux,
+	}
+	s.ListenAndServe()
 }

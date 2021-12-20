@@ -1,15 +1,22 @@
 package killmails
 
 import (
+	"encoding/json"
 	kmm "gomzm-api/models/killmails"
 )
 
-func KillmailsList() ([]kmm.Killmail, error) {
-	results, err := kmm.GetList()
+func KillmailsList() ([]byte, error) {
+	killmails, err := kmm.GetList()
 
 	if err != nil {
-		return nil, err
+		return []byte("null"), err
 	}
 
-	return results, nil
+	// Prepare the body
+	body, err := json.Marshal(killmails)
+	if err != nil {
+		return []byte("null"), err
+	}
+
+	return body, nil
 }
