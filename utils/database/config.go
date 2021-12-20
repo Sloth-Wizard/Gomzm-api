@@ -1,3 +1,6 @@
+/*
+Prepare the configuration file to be read by the database
+*/
 package database
 
 import (

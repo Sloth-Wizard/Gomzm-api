@@ -1,3 +1,6 @@
+/*
+Manages the connection to the Database
+*/
 package database
 
 import (
