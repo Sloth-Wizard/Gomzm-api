@@ -22,8 +22,7 @@ func Connect() (*sql.DB, error) {
 	}
 
 	// Then validate the DSN data passed
-	err = db.Ping()
-	if err != nil {
+	if err = db.Ping(); err != nil {
 		return nil, err
 	}
 

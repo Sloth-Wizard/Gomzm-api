@@ -5,9 +5,16 @@ package killmails
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"gomzm-api/utils/database"
 )
+
+const LIMIT = "40" // Must be a string because it's used in queries
+
+type KillmailList struct {
+	Killmails []*Killmail `json:"killmails"`
+}
 
 type Killmail struct {
 	Id                      uint            `json:"id"`
@@ -18,29 +25,50 @@ type Killmail struct {
 	Killmail_details        json.RawMessage `json:"killmail_details"`
 }
 
-const LIMIT = "40" // Must be a string because it's used in queries
-
 var (
 	db, _ = database.Connect()
 )
 
-/*
-Open a connection to the DB and return the queried data
-*/
-func GetList() ([]Killmail, error) {
-	var killmail Killmail
-	var results []Killmail
+func Get(_type string) ([]*Killmail, error) {
+	switch _type {
+	case "list":
+		kml := new(KillmailList)
+		r, err := kml.GetList()
+		if err != nil {
+			return nil, err
+		}
 
-	// Prepare the statement
-	stmtOut, err := db.Prepare("SELECT * FROM killmails LIMIT " + LIMIT)
-	if err != nil {
-		return nil, err
+		return r, nil
 	}
-	defer stmtOut.Close()
 
-	// Execute the statement
-	rows, err := stmtOut.Query()
+	err := errors.New("please specify a type to get (err: 1)")
+	return nil, err
+}
+
+/*
+DB killmail scannable fields
+*/
+func (k *Killmail) scannableFields() []interface{} {
+	return []interface{}{
+		&k.Id,
+		&k.Killmail_id,
+		&k.Victim_character_id,
+		&k.Final_blow_character_id,
+		&k.Final_blow_faction_id,
+		&k.Killmail_details}
+}
+
+/*
+Query the DB and get a list of killmails
+*/
+func (kml *KillmailList) GetList() ([]*Killmail, error) {
+	k := new(Killmail)
+
+	// Prepare and execute the statement
 	fmt.Printf("Getting KM from DB ...\n")
+
+	q := "SELECT * FROM killmails LIMIT ?"
+	rows, err := db.Query(q, LIMIT)
 	if err != nil {
 		return nil, err
 	}
@@ -48,20 +76,12 @@ func GetList() ([]Killmail, error) {
 
 	// Scan results
 	for rows.Next() {
-		err := rows.Scan(
-			&killmail.Id,
-			&killmail.Killmail_id,
-			&killmail.Victim_character_id,
-			&killmail.Final_blow_character_id,
-			&killmail.Final_blow_faction_id,
-			&killmail.Killmail_details)
-
-		if err != nil {
+		if err := rows.Scan(k.scannableFields()...); err != nil {
 			return nil, err
 		}
 
-		results = append(results, killmail)
+		kml.Killmails = append(kml.Killmails, k)
 	}
 
-	return results, nil
+	return kml.Killmails, nil
 }
