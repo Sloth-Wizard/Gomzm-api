@@ -26,7 +26,7 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Opening DB ...\n")
+	fmt.Printf("[%s] Opening DB ...\n", time.Now().Format("2006-01-02 15:04:05"))
 
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)

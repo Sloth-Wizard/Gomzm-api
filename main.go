@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	API "gomzm-api/api/killmails"
 )
@@ -25,7 +26,7 @@ func getKmList(w http.ResponseWriter, r *http.Request) {
 Manage all the API routing
 */
 func main() {
-	fmt.Printf("Starting API ...\n")
+	fmt.Printf("[%s] Starting API ...\n", time.Now().Format("2006-01-02 15:04:05"))
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/killmails/", getKmList)
 

@@ -8,13 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"gomzm-api/utils/database"
+	"time"
 )
-
-const LIMIT = "40" // Must be a string because it's used in queries
-
-type KillmailList struct {
-	Killmails []*Killmail `json:"killmails"`
-}
 
 type Killmail struct {
 	Id                      uint            `json:"id"`
@@ -25,6 +20,10 @@ type Killmail struct {
 	Killmail_details        json.RawMessage `json:"killmail_details"`
 }
 
+type KillmailList struct {
+	Killmails []*Killmail `json:"killmails"`
+}
+
 var (
 	db, _ = database.Connect()
 )
@@ -33,7 +32,7 @@ func Get(_type string) ([]*Killmail, error) {
 	switch _type {
 	case "list":
 		kml := new(KillmailList)
-		r, err := kml.GetList()
+		r, err := kml.getList()
 		if err != nil {
 			return nil, err
 		}
@@ -61,14 +60,12 @@ func (k *Killmail) scannableFields() []interface{} {
 /*
 Query the DB and get a list of killmails
 */
-func (kml *KillmailList) GetList() ([]*Killmail, error) {
-	k := new(Killmail)
-
+func (kml *KillmailList) getList() ([]*Killmail, error) {
 	// Prepare and execute the statement
-	fmt.Printf("Getting KM from DB ...\n")
+	fmt.Printf("[%s] Getting KM from DB ...\n", time.Now().Format("2006-01-02 15:04:05"))
 
 	q := "SELECT * FROM killmails LIMIT ?"
-	rows, err := db.Query(q, LIMIT)
+	rows, err := db.Query(q, 40)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +73,7 @@ func (kml *KillmailList) GetList() ([]*Killmail, error) {
 
 	// Scan results
 	for rows.Next() {
+		k := new(Killmail)
 		if err := rows.Scan(k.scannableFields()...); err != nil {
 			return nil, err
 		}
