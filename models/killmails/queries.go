@@ -28,22 +28,6 @@ var (
 	db, _ = database.Connect()
 )
 
-func Get(_type string) ([]*Killmail, error) {
-	switch _type {
-	case "list":
-		kml := new(KillmailList)
-		r, err := kml.getList()
-		if err != nil {
-			return nil, err
-		}
-
-		return r, nil
-	}
-
-	err := errors.New("please specify a type to get (err: 1)")
-	return nil, err
-}
-
 /*
 DB killmail scannable fields
 */
@@ -65,7 +49,7 @@ func (kml *KillmailList) getList() ([]*Killmail, error) {
 	fmt.Printf("[%s] Getting KM from DB ...\n", time.Now().Format("2006-01-02 15:04:05"))
 
 	q := "SELECT * FROM killmails LIMIT ?"
-	rows, err := db.Query(q, 40)
+	rows, err := db.Query(q, 2)
 	if err != nil {
 		return nil, err
 	}
@@ -82,4 +66,23 @@ func (kml *KillmailList) getList() ([]*Killmail, error) {
 	}
 
 	return kml.Killmails, nil
+}
+
+/*
+Get killmail data from wanted display type
+*/
+func Get(_type string) ([]*Killmail, error) {
+	switch _type {
+	case "list":
+		kml := new(KillmailList)
+		r, err := kml.getList()
+		if err != nil {
+			return nil, err
+		}
+
+		return r, nil
+	}
+
+	err := errors.New("please specify a type to get (err: 1)")
+	return nil, err
 }

@@ -1,11 +1,11 @@
 package killmails
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"gomzm-api/models/killmails"
+	"gomzm-api/utils/formatter"
 )
 
 /*
@@ -16,13 +16,13 @@ func KillmailsList() ([]byte, error) {
 
 	response, err := killmails.Get("list")
 	if err != nil {
-		return []byte("null"), err
+		return []byte(nil), err
 	}
 
 	// Prepare the body
-	body, err := json.Marshal(response)
+	body, err := formatter.KmToList(response)
 	if err != nil {
-		return []byte("null"), err
+		return []byte(nil), err
 	}
 
 	return body, nil
