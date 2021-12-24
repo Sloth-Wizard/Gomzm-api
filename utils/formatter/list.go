@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
+	"strconv"
 )
 
 type ApiKmList struct {
@@ -32,7 +34,7 @@ type ApiKmList struct {
 	Final_blow_alliance_name          string  `json:"final_blow_alliance_name"`
 	Final_blow_alliance_gooby_name    string  `json:"final_blow_alliance_gooby_name"`
 	Final_blow_alliance_image         string  `json:"final_blow_alliance_image"`
-	Involved                          uint    `json:"involved"`
+	Involved                          int     `json:"involved"`
 	Total_price                       float64 `json:"total_price"`
 }
 
@@ -59,14 +61,28 @@ func (akl *ApiKmList) getFinalBlow(data interface{}) error {
 
 			if trigger {
 				for fb_k, fb_v := range attacker {
-					//fmt.Printf("	\033[32m[========>]\033[0m \033[36m%s\033[0m = %s \n\n", fb_k, fb_v)
+					fmt.Printf("	\033[32m[========>]\033[0m \033[36m%s\033[0m = %s \n\n", fb_k, fb_v)
 					switch fb_k { // TODO: add faction exception if happens
 					case "name":
 						akl.Final_blow_name = fb_v.(string)
 					case "gooby_name":
 						akl.Final_blow_gooby_name = fb_v.(string)
+					case "faction_name":
+						akl.Final_blow_faction_name = fb_v.(string)
+					case "faction_gooby_name":
+						akl.Final_blow_faction_gooby_name = fb_v.(string)
+					case "faction_image":
+						akl.Final_blow_faction_image = fb_v.(string)
 					case "corporation_id":
-						akl.Final_blow_corporation = uint(fb_v.(float64))
+						if reflect.TypeOf(fb_v).String() == "string" {
+							i, err := strconv.Atoi(fb_v.(string))
+							if err != nil {
+								return err
+							}
+							akl.Final_blow_faction, akl.Final_blow_corporation = uint(i), uint(i)
+						} else {
+							akl.Final_blow_corporation = uint(fb_v.(float64))
+						}
 					case "corporation_name":
 						akl.Final_blow_corporation_name = fb_v.(string)
 					case "corporation_gooby_name":
@@ -88,6 +104,8 @@ func (akl *ApiKmList) getFinalBlow(data interface{}) error {
 			return errors.New("no attackers ? skip this kill it isn't valid")
 		}
 	}
+
+	akl.Involved = len(r)
 
 	return nil
 }

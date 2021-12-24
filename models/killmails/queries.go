@@ -49,7 +49,7 @@ func (kml *KillmailList) getList() ([]*Killmail, error) {
 	fmt.Printf("[%s] Getting KM from DB ...\n", time.Now().Format("2006-01-02 15:04:05"))
 
 	q := "SELECT * FROM killmails LIMIT ?"
-	rows, err := db.Query(q, 1)
+	rows, err := db.Query(q, 40)
 	if err != nil {
 		return nil, err
 	}
